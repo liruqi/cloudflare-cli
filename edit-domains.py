@@ -5,10 +5,18 @@ import requests
 
 def get_args():
     parser = argparse.ArgumentParser(description='Modify domain configurations in bulk')
-    parser.add_argument('-d', '--domain', required=True, help='the domain to target')
+    parser.add_argument('-d', '--domain', help='the domain to target')
     parser.add_argument('--arhttps', type=int, choices=[-1, 0, 1], default=-1, help='enable/disable Automatic HTTPS Rewrites')
     parser.add_argument('--auhttps', type=int, choices=[-1, 0, 1], default=-1, help='enable/disable Always Use HTTPS')
     return parser.parse_args()
+
+def get_domains(domain):
+    if domain is None or domain == '*':
+        with open('domains.txt', 'r') as f:
+            domains = [line.strip().replace('https://', '') for line in f]
+    else:
+        domains = [domain]
+    return domains
 
 def get_credentials():
     try:
@@ -43,9 +51,11 @@ def update_settings(domain, arhttps, auhttps, headers):
 
 def main():
     args = get_args()
+    domains = get_domains(args.domain)
     credentials = get_credentials()
     headers = set_headers(credentials)
-    update_settings(args.domain, args.arhttps, args.auhttps, headers)
+    for domain in domains:
+        update_settings(domain, args.arhttps, args.auhttps, headers)
 
 if __name__== '__main__':
     main()
