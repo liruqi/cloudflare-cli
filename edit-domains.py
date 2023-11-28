@@ -3,6 +3,9 @@
 import argparse, json, sys
 import requests
 
+def get_value(choice):
+    return 'on' if choice>0 else 'off'
+    
 def get_args():
     parser = argparse.ArgumentParser(description='Modify domain configurations in bulk')
     parser.add_argument('-d', '--domain', help='the domain to target')
@@ -40,14 +43,16 @@ def get_zone_id(domain, headers):
 
 def update_settings(domain, arhttps, auhttps, headers):
     zone_id = get_zone_id(domain, headers)
-    data = {}
     if arhttps != -1:
-        data['automatic_https_rewrites'] = bool(arhttps)
-    if auhttps != -1:
-        data['always_use_https'] = bool(auhttps)
-    if data:
-        response = requests.patch(f'https://api.cloudflare.com/client/v4/zones/{zone_id}/settings', headers=headers, json=data)
+        data = {'value': get_value(arhttps)}
+        response = requests.patch(f'https://api.cloudflare.com/client/v4/zones/{zone_id}/settings/automatic_https_rewrites', headers=headers, json=data)
         response.raise_for_status()
+        print(domain, 'arhttps', response.json())
+    if auhttps != -1:
+        data = {'value': get_value(auhttps)}
+        response = requests.patch(f'https://api.cloudflare.com/client/v4/zones/{zone_id}/settings/always_use_https', headers=headers, json=data)
+        response.raise_for_status()
+        print(domain, 'auhttps', response.json())
 
 def main():
     args = get_args()
