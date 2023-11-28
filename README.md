@@ -1,7 +1,7 @@
-# cloudflare-dns
+# cloudflare-cli
 
 ## Purpose
-Add, update or delete your domain's DNS records from the command line using the [Cloudflare API](https://api.cloudflare.com/#dns-records-for-a-zone-properties). 
+Manage domains and DNS records from the command line using the [Cloudflare API](https://api.cloudflare.com/#dns-records-for-a-zone-properties). 
 
 ## Background
 I initially wrote this script as a quick way of repeatedly adding or updating DNS records for several domains from the command line when I was building and testing my mail server. ***If you're thinking of using it, it's important you read the [Limitations](#limitations) section first*** and check your domain's DNS records on Cloudflare afterwards. 
