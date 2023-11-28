@@ -2,6 +2,8 @@
 
 import json, sys, requests
 
+UPS_IP = '47.251.0.62'
+
 # Check Python version
 if not sys.version_info >= (3, 6):
     print('Python 3.6 or later is required to run this script.')
@@ -37,13 +39,14 @@ def add_domain(domain, headers):
     response.raise_for_status()
     return response.json()
 
-def add_a_record(domain, zone_id, ip_address, headers):
+def add_a_record(zone_id, ip_address, headers):
     url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records'
     data = {
         'type': 'A',
         'name': '@',
         'content': ip_address,
-        'ttl': 120
+        'ttl': 120,
+        'proxied': True
     }
     response = requests.post(url, headers=headers, json=data)
     response.raise_for_status()
@@ -52,7 +55,6 @@ def add_a_record(domain, zone_id, ip_address, headers):
 def main():
     credentials = get_credentials()
     headers = set_headers(credentials)
-    ip_address = '47.251.0.62'
     
     with open('domains.txt', 'r') as f:
         for line in f:
@@ -62,7 +64,7 @@ def main():
             zone = add_domain(domain, headers)
             zone_id = zone['result']['id']
             print(domain, '->', json.dumps(zone, indent=4))
-            print(domain, '->', add_a_record(domain, zone_id, ip_address, headers))
+            print(domain, '->', add_a_record(zone_id, UPS_IP, headers))
 
 if __name__== '__main__' :
     main()
