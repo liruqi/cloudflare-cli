@@ -6,8 +6,8 @@ import requests
 def get_args():
     parser = argparse.ArgumentParser(description='Modify domain configurations in bulk')
     parser.add_argument('-d', '--domain', required=True, help='the domain to target')
-    parser.add_argument('--arhttps', type=int, choices=[0, 1], help='enable/disable Automatic HTTPS Rewrites')
-    parser.add_argument('--auhttps', type=int, choices=[0, 1], help='enable/disable Always Use HTTPS')
+    parser.add_argument('--arhttps', type=int, choices=[-1, 0, 1], default=-1, help='enable/disable Automatic HTTPS Rewrites')
+    parser.add_argument('--auhttps', type=int, choices=[-1, 0, 1], default=-1, help='enable/disable Always Use HTTPS')
     return parser.parse_args()
 
 def get_credentials():
@@ -32,12 +32,14 @@ def get_zone_id(domain, headers):
 
 def update_settings(domain, arhttps, auhttps, headers):
     zone_id = get_zone_id(domain, headers)
-    data = {
-        'always_use_https': bool(auhttps),
-        'automatic_https_rewrites': bool(arhttps)
-    }
-    response = requests.patch(f'https://api.cloudflare.com/client/v4/zones/{zone_id}/settings', headers=headers, json=data)
-    response.raise_for_status()
+    data = {}
+    if arhttps != -1:
+        data['automatic_https_rewrites'] = bool(arhttps)
+    if auhttps != -1:
+        data['always_use_https'] = bool(auhttps)
+    if data:
+        response = requests.patch(f'https://api.cloudflare.com/client/v4/zones/{zone_id}/settings', headers=headers, json=data)
+        response.raise_for_status()
 
 def main():
     args = get_args()
