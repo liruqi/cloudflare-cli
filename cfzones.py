@@ -62,9 +62,11 @@ def main():
             if domain[:8] == 'https://':
                 domain = domain[8:]
             zone = add_domain(domain, headers)
-            zone_id = zone['result']['id']
-            print(domain, '->', json.dumps(zone, indent=4))
-            print(domain, '->', add_a_record(zone_id, UPS_IP, headers))
-
+            if zone["success"]:
+                zone_id = zone['result']['id']
+                print(domain, '->', json.dumps(zone['result']['name_servers'], indent=4))
+                print(domain, '->', add_a_record(zone_id, UPS_IP, headers))
+            else:
+                print('Failed:', domain, json.dumps(zone, indent=4))
 if __name__== '__main__' :
     main()
