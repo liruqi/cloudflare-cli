@@ -3,16 +3,16 @@
 """
 cfzones.py
 
-检查需要加入的域名，是否为二级域名，如果是，则按照原有逻辑直接加入。
+提取目标域名的二级域名，如果跟目标域名相同，则按照原有逻辑直接加入。
 
-如果不是，把二级域名提取出来加入 Cloudflare 的 zone，并将 '@' 解析替换为域名的前缀。
+如果不同，把二级域名加入 Cloudflare 的 zone，并将A解析的 name '@' 替换为二级域名前面的字符串。
 
 如:
 user.example.com {ip}
 
 调用:
 add_domain('example.com', {ip})
-add_a_record(zone_id, ip_address, headers, 'user') 此函数增加一个参数name, 默认为 '@'
+add_a_record(zone_id, ip_address, headers, 'user') 
 """
 
 import argparse, json, sys, requests
