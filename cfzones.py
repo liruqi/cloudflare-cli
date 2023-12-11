@@ -16,6 +16,7 @@ add_a_record(zone_id, ip_address, headers, 'user') 此函数增加一个参数na
 """
 
 import argparse, json, sys, requests
+from utils import get_second_level_domain
 
 
 # Check Python version
@@ -58,11 +59,11 @@ def add_domain(domain, headers):
     response.raise_for_status()
     return response.json()
 
-def add_a_record(zone_id, ip_address, headers):
+def add_a_record(zone_id, ip_address, headers, name='@'):
     url = f'https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records'
     data = {
         'type': 'A',
-        'name': '@',
+        'name': name,
         'content': ip_address,
         'ttl': 120,
         'proxied': True
