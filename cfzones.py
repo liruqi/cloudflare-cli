@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import json, sys, requests
+import argparse, json, sys, requests
 
 UPS_IP = '47.251.0.62'
 
@@ -8,6 +8,11 @@ UPS_IP = '47.251.0.62'
 if not sys.version_info >= (3, 6):
     print('Python 3.6 or later is required to run this script.')
     sys.exit(1)
+
+def get_args():
+    parser = argparse.ArgumentParser(description='Add domains to Cloudflare')
+    parser.add_argument('-i', '--ip', help='the IP address to use for the A record')
+    return parser.parse_args()
 
 try:
     import requests
@@ -53,6 +58,9 @@ def add_a_record(zone_id, ip_address, headers):
     return response.json()
 
 def main():
+    args = get_args()
+    ip_address = args.ip if args.ip else UPS_IP
+
     credentials = get_credentials()
     headers = set_headers(credentials)
     
@@ -65,7 +73,7 @@ def main():
             if zone["success"]:
                 zone_id = zone['result']['id']
                 print(domain, '->', json.dumps(zone['result']['name_servers'], indent=4))
-                print(domain, '->', add_a_record(zone_id, UPS_IP, headers))
+                print(domain, '->', add_a_record(zone_id, ip_address, headers))
             else:
                 print('Failed:', domain, json.dumps(zone, indent=4))
 if __name__== '__main__' :
