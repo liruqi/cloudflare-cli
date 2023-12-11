@@ -85,11 +85,17 @@ def main():
             domain = line.strip()
             if domain[:8] == 'https://':
                 domain = domain[8:]
+            second_level_domain = get_second_level_domain(domain)
+            if second_level_domain != domain:
+                name = domain.split('.')[0]
+                domain = second_level_domain
+            else:
+                name = '@'
             zone = add_domain(domain, headers)
             if zone["success"]:
                 zone_id = zone['result']['id']
                 print(domain, '->', json.dumps(zone['result']['name_servers'], indent=4))
-                print(domain, '->', add_a_record(zone_id, ip_address, headers))
+                print(domain, '->', add_a_record(zone_id, ip_address, headers, name))
             else:
                 print('Failed:', domain, json.dumps(zone, indent=4))
 if __name__== '__main__' :
