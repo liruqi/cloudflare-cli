@@ -2,7 +2,6 @@
 
 import argparse, json, sys, requests
 
-UPS_IP = '47.251.0.62'
 
 # Check Python version
 if not sys.version_info >= (3, 6):
@@ -58,6 +57,7 @@ def add_a_record(zone_id, ip_address, headers):
     return response.json()
 
 def main():
+    UPS_IP = '47.251.0.62'
     args = get_args()
     ip_address = args.ip if args.ip else UPS_IP
 
