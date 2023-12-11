@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
 
+"""
+cfzones.py
+
+检查需要加入的域名，是否为二级域名，如果是，则按照原有逻辑直接加入。
+
+如果不是，把二级域名提取出来加入 Cloudflare 的 zone，并将 '@' 解析替换为域名的前缀。
+
+如:
+user.example.com {ip}
+
+调用:
+add_domain('example.com', {ip})
+add_a_record(zone_id, ip_address, headers, 'user') 此函数增加一个参数name, 默认为 '@'
+"""
+
 import argparse, json, sys, requests
 
 
